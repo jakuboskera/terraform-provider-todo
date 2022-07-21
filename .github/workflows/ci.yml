@@ -1,0 +1,48 @@
+name: Go implementation (CI)
+on:
+  push:
+  pull_request:
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Setup Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.18
+    - id: go-cache-paths
+      run: |
+        echo "::set-output name=go-build::$(go env GOCACHE)"
+        echo "::set-output name=go-mod::$(go env GOMODCACHE)"
+    - name: Go Build Cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.go-cache-paths.outputs.go-build }}
+        key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}
+    - name: Go Mod Cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.go-cache-paths.outputs.go-mod }}
+        key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}
+    - name: Ensure gofmt
+      run: test -z "$(gofmt -s -d .)"
+    - name: Ensure go.mod is already tidied
+      run: go mod tidy && git diff --no-patch --exit-code
+    - name: Run unit tests
+      run: go test ./...
+    - name: Import GPG key
+      id: import_gpg
+      uses: crazy-max/ghaction-import-gpg@v5
+      with:
+        gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+        passphrase: ${{ secrets.GPG_PASSPHRASE }}
+    - name: Build with Goreleaser
+      uses: goreleaser/goreleaser-action@v3
+      with:
+        version: latest
+        args: release --snapshot --skip-publish --rm-dist
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+        GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint }}
