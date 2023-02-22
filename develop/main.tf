@@ -8,4 +8,5 @@ resource "todo_task" "cooking" {
 
 resource "todo_task" "cleaning" {
   text = "Clean your messy house"
+  is_done = true
 }

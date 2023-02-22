@@ -21,6 +21,11 @@ func resourceTask() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"is_done": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
 		},
 	}
 }
@@ -57,6 +62,7 @@ func resourceTaskRead(d *schema.ResourceData, m interface{}) error {
 	}
 
 	d.Set("text", jsonData.Text)
+	d.Set("is_done", jsonData.IsDone)
 
 	return nil
 }

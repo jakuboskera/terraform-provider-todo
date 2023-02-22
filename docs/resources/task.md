@@ -5,6 +5,7 @@
 ```hcl
 resource "todo_task" "coding" {
   text = "Create the best application ever"
+  is_done = true
 }
 ```
 
@@ -12,4 +13,5 @@ resource "todo_task" "coding" {
 
 The following arguments are supported:
 
-- **text** - (Required) The task details.
+- **text** - (Required) The task details
+- **is_done** - (Optional) Deciding if task is done, default `false`

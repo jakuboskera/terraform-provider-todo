@@ -8,6 +8,7 @@ import (
 // TaskBody return a json body
 func TaskBody(d *schema.ResourceData) models.TaskBody {
 	return models.TaskBody{
-		Text: d.Get("text").(string),
+		Text:   d.Get("text").(string),
+		IsDone: d.Get("is_done").(bool),
 	}
 }
