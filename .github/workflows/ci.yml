@@ -39,7 +39,7 @@ jobs:
         gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
         passphrase: ${{ secrets.GPG_PASSPHRASE }}
     - name: Build with Goreleaser
-      uses: goreleaser/goreleaser-action@v3
+      uses: goreleaser/goreleaser-action@v7
       with:
         version: latest
         args: release --snapshot --skip-publish --rm-dist
